@@ -1,5 +1,6 @@
 import streamlit as st
 import subprocess
+import shutil
 import os
 import PyPDF2
 
@@ -28,20 +29,24 @@ def read_all_pdfs_in_folder(folder_path):
 
 # Function to run the Ollama Qwen2.5:14b model
 def run_qwen2dot5_model(prompt, model="qwen2.5:14b"):
+    # Check if 'ollama' is installed
+    if shutil.which("ollama") is None:
+        return "Error: Ollama is not installed or not found in system PATH."
+
     try:
         result = subprocess.run(
             ["ollama", "run", model],
-            input=prompt,
+            input=prompt.encode(),  # Encode input to bytes
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+            stderr=subprocess.PIPE
         )
         if result.returncode == 0:
-            return result.stdout.strip()
+            return result.stdout.decode().strip()
         else:
-            return f"Error: {result.stderr}"
+            return f"Error: {result.stderr.decode()}"
     except Exception as e:
         return f"Exception occurred: {str(e)}"
+
 
 # Summarization function
 def summarize_all_pdfs(folder_path):
