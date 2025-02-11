@@ -1,5 +1,5 @@
 langchain
 python-dotenv
 arxiv
-ollama
+ollama==0.4.7
 PyPDF2
